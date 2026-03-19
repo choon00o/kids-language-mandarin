@@ -707,10 +707,18 @@ function onMove(e) {
   topCard.style.transform = `translate(${currentX}px, ${currentY * 0.3}px) rotate(${rotate}deg)`;
   topCard.style.transition = 'none';
 
-  // show labels
+  // show labels + tint card background
   const ratio = Math.min(Math.abs(currentX) / 80, 1);
   topCard.querySelector('.swipe-label.know').style.opacity = currentX > 0 ? ratio : 0;
   topCard.querySelector('.swipe-label.practice').style.opacity = currentX < 0 ? ratio : 0;
+
+  if (currentX > 0) {
+    topCard.style.background = `rgba(81, 207, 102, ${ratio * 0.25})`;
+  } else if (currentX < 0) {
+    topCard.style.background = `rgba(255, 107, 107, ${ratio * 0.25})`;
+  } else {
+    topCard.style.background = '';
+  }
 }
 
 function onEnd() {
@@ -728,8 +736,9 @@ function onEnd() {
     flyOut('left');
   } else {
     // snap back
-    topCard.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    topCard.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s';
     topCard.style.transform = '';
+    topCard.style.background = '';
     topCard.querySelector('.swipe-label.know').style.opacity = 0;
     topCard.querySelector('.swipe-label.practice').style.opacity = 0;
   }
