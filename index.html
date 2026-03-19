@@ -59,16 +59,17 @@
   .native-select {
     border: 2px solid #E9ECEF;
     border-radius: 14px;
-    padding: 5px 8px;
+    padding: 5px 28px 5px 8px;
     font-size: 0.78rem;
     font-weight: 700;
     font-family: inherit;
-    background: #fff;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 10px center;
+    -webkit-appearance: none;
+    appearance: none;
     color: #555;
     cursor: pointer;
     outline: none;
     white-space: nowrap;
-    max-width: 120px;
     transition: border-color 0.2s;
   }
   .native-select:focus { border-color: #FF6B6B; }
@@ -653,7 +654,7 @@ const LANGUAGES = {
   ru: { name: 'Russian',  flag: '🇷🇺', locale: 'ru-RU', label: 'Русский' },
   hi: { name: 'Hindi',    flag: '🇮🇳', locale: 'hi-IN', label: 'हिन्दी' },
   pt: { name: 'Portuguese', flag: '🇵🇹', locale: 'pt-BR', label: 'Português' },
-  ta: { name: 'Tamil',      flag: '🇮🇳', locale: 'ta-IN', label: 'தமிழ்' },
+  ta: { name: 'Tamil',      flag: '🇱🇰', locale: 'ta-LK', label: 'தமிழ்' },
 };
 
 const CATEGORIES = {
@@ -769,17 +770,32 @@ const NATIVE_OPTIONS = [
   { value: 'ru', label: '🇷🇺 Russian' },
   { value: 'hi', label: '🇮🇳 Hindi' },
   { value: 'pt', label: '🇵🇹 Portuguese' },
-  { value: 'ta', label: '🇮🇳 Tamil' },
+  { value: 'ta', label: '🇱🇰 Tamil' },
 ];
+const nativeGroup = document.createElement('optgroup');
+nativeGroup.label = 'I speak…';
+nativeSelect.appendChild(nativeGroup);
 NATIVE_OPTIONS.forEach(opt => {
   const o = document.createElement('option');
   o.value = opt.value;
   o.textContent = opt.label;
   if (opt.value === currentNative) o.selected = true;
-  nativeSelect.appendChild(o);
+  nativeGroup.appendChild(o);
 });
+// Resize select to hug selected option text
+const _nativeSizer = document.createElement('span');
+_nativeSizer.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font-size:0.78rem;font-weight:700;font-family:inherit;padding:0';
+document.body.appendChild(_nativeSizer);
+function resizeNativeSelect() {
+  const selected = nativeSelect.options[nativeSelect.selectedIndex];
+  _nativeSizer.textContent = selected ? selected.textContent : '';
+  nativeSelect.style.width = (_nativeSizer.offsetWidth + 44) + 'px'; // +44 for padding + chevron
+}
+resizeNativeSelect();
+
 nativeSelect.onchange = () => {
   currentNative = nativeSelect.value;
+  resizeNativeSelect();
   renderCards();
 };
 
